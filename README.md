@@ -27,4 +27,7 @@ There is ```input("\nPress Enter to exit...")``` so you can just dobule click th
 
 ---
 # For webpage🌐
-
+## Languages Used
+![CSS](https://img.shields.io/badge/Css-3776AB?style=for-the-badge&logo=css&logoColor=white)
+![HTML](https://img.shields.io/badge/Html-3776AB?style=for-the-badge&logo=html&logoColor=white)
+![JavaScript](https://img.shields.io/badge/Javascript-3776AB?style=for-the-badge&logo=javascript&logoColor=white)
