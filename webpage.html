@@ -3,69 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHA-256 Hash Checker</title>
+    <title>SHA-256 Hash Matcher</title>
     <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --success: #22c55e;
+            --error: #ef4444;
+        }
+
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            height: 100vh;
+            align-items: center;
+            min-height: 100vh;
             margin: 0;
         }
-        h1 {
-            color: #fff;
-            margin-bottom: 20px;
-        }
-        input, button {
-            padding: 12px 20px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-        input {
-            width: 300px;
-        }
-        button {
-            background-color: #ff6b81;
-            color: white;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        button:hover {
-            background-color: #ff4757;
-        }
-        #result {
-            margin-top: 20px;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            width: 320px;
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
             text-align: center;
         }
-        #result.success {
-            background-color: #2ed573;
-            color: #fff;
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
         }
-        #result.error {
-            background-color: #ff4757;
-            color: #fff;
+
+        .section {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            color: #94a3b8;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: white;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: #0f172a;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background-color: #334155;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #475569;
+        }
+
+        #result {
+            margin-top: 1.5rem;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            min-height: 20px;
+            display: none;
+        }
+
+        .success { display: block !important; background: rgba(34, 197, 94, 0.2); border: 1px solid var(--success); color: var(--success); }
+        .error { display: block !important; background: rgba(239, 68, 68, 0.2); border: 1px solid var(--error); color: var(--error); }
+        .info { display: block !important; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--accent); }
+
+        .list-container {
+            margin-top: 1rem;
+            max-height: 100px;
+            overflow-y: auto;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.8rem;
+            text-align: left;
+            border: 1px solid #334155;
+        }
+
+        .list-tag {
+            display: inline-block;
+            background: #334155;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 2px;
         }
     </style>
 </head>
 <body>
 
-    <h1>SHA-256 Hash Checker</h1>
-    <input type="text" id="hashInput" placeholder="Enter SHA-256 hash">
-    <button onclick="checkHash()">Check Hash</button>
-    <div id="result"></div>
+    <div class="container">
+        <h1>Hash Matcher</h1>
+        
+        <div class="section">
+            <label>Add Potential Password to List</label>
+            <div class="btn-group">
+                <input type="text" id="newPass" placeholder="e.g. dragon88">
+                <button class="btn-secondary" onclick="addPassword()" style="flex: 0 0 80px;">Add</button>
+            </div>
+            <div class="list-container" id="passListDisplay">
+                </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #334155; margin: 20px 0;">
+
+        <div class="section">
+            <label>SHA-256 Hash to Crack</label>
+            <input type="text" id="hashInput" placeholder="Paste hash here...">
+            <button class="btn-primary" onclick="checkHash()" style="width: 100%; margin-top: 10px;">Compare Against List</button>
+        </div>
+
+        <div id="result"></div>
+    </div>
 
     <script>
-        // Sample password list (for demo purposes)
-        const passwords = ["password123", "hello", "admin", "123456", "qwerty"];
+        let passwords = ["password123", "hello", "admin", "123456", "qwerty"];
+
+        function updateDisplay() {
+            const container = document.getElementById("passListDisplay");
+            container.innerHTML = passwords.map(p => `<span class="list-tag">${p}</span>`).join('');
+        }
+
+        function addPassword() {
+            const input = document.getElementById("newPass");
+            const val = input.value.trim();
+            if (val && !passwords.includes(val)) {
+                passwords.push(val);
+                input.value = "";
+                updateDisplay();
+            }
+        }
 
         async function sha256(message) {
             const msgBuffer = new TextEncoder().encode(message);
@@ -77,22 +192,33 @@
         async function checkHash() {
             const hashInput = document.getElementById("hashInput").value.trim().toLowerCase();
             const resultDiv = document.getElementById("result");
-            resultDiv.textContent = "Checking...";
-            resultDiv.className = "";
+            
+            if (!hashInput) {
+                showResult("Please enter a hash first.", "error");
+                return;
+            }
+
+            showResult("Searching through " + passwords.length + " entries...", "info");
 
             for (let password of passwords) {
                 const hashed = await sha256(password);
                 if (hashed === hashInput) {
-                    resultDiv.textContent = "✅ Hash matched! Original password: " + password;
-                    resultDiv.className = "success";
+                    showResult(`✅ Match Found!<br><strong>${password}</strong>`, "success");
                     return;
                 }
             }
 
-            resultDiv.textContent = "❌ No matching password found.";
-            resultDiv.className = "error";
+            showResult("No match found in current list.", "error");
         }
-    </script>
 
+        function showResult(text, className) {
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = text;
+            resultDiv.className = className;
+        }
+
+        // Initialize display
+        updateDisplay();
+    </script>
 </body>
 </html>
