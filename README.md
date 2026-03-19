@@ -24,6 +24,7 @@ A simple Python tool that demonstrates how **SHA-256 hashing** works by comparin
 ### How to use?
 There is ```input("\nPress Enter to exit...")``` so you can just dobule click the HashMatch.py to run it
 
+
 ---
-# (For webpage)
+# For webpage🌐
 
