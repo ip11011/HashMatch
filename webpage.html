@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHA-256 Hash Checker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 12px 20px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        input {
+            width: 300px;
+        }
+        button {
+            background-color: #ff6b81;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #ff4757;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 320px;
+            text-align: center;
+        }
+        #result.success {
+            background-color: #2ed573;
+            color: #fff;
+        }
+        #result.error {
+            background-color: #ff4757;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>SHA-256 Hash Checker</h1>
+    <input type="text" id="hashInput" placeholder="Enter SHA-256 hash">
+    <button onclick="checkHash()">Check Hash</button>
+    <div id="result"></div>
+
+    <script>
+        // Sample password list (for demo purposes)
+        const passwords = ["password123", "hello", "admin", "123456", "qwerty"];
+
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        async function checkHash() {
+            const hashInput = document.getElementById("hashInput").value.trim().toLowerCase();
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = "Checking...";
+            resultDiv.className = "";
+
+            for (let password of passwords) {
+                const hashed = await sha256(password);
+                if (hashed === hashInput) {
+                    resultDiv.textContent = "✅ Hash matched! Original password: " + password;
+                    resultDiv.className = "success";
+                    return;
+                }
+            }
+
+            resultDiv.textContent = "❌ No matching password found.";
+            resultDiv.className = "error";
+        }
+    </script>
+
+</body>
+</html>
