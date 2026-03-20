@@ -44,7 +44,7 @@ Check a SHA‑256 hash against your list of passwords. Works in Python or direct
 
 ### How to use
 
-* Open `index.html` in a browser
+* Open [`web.html`](https://ip11011.github.io/HashMatch/web.html) in a browser
 * Enter hash and passwords
 * Click the button → result appears instantly
 
