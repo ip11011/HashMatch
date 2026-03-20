@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SHA-256 Hash Matcher</title>
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/9776/9776900.png ">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/9776/9776900.png">
 
     <style>
         :root {
@@ -67,6 +67,12 @@
             transition: border-color 0.2s;
         }
 
+        input[type="file"] {
+            padding: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
         input:focus {
             outline: none;
             border-color: var(--accent);
@@ -106,6 +112,14 @@
             background-color: #475569;
         }
 
+        .btn-danger {
+            background-color: #450a0a;
+            color: #f87171;
+            border: 1px solid #7f1d1d;
+            font-size: 0.75rem;
+            padding: 5px;
+        }
+
         #result {
             margin-top: 1.5rem;
             padding: 12px;
@@ -121,7 +135,7 @@
 
         .list-container {
             margin-top: 1rem;
-            max-height: 100px;
+            max-height: 120px;
             overflow-y: auto;
             background: #0f172a;
             border-radius: 8px;
@@ -138,6 +152,13 @@
             border-radius: 4px;
             margin: 2px;
         }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -146,13 +167,25 @@
         <h1>Hash Matcher</h1>
         
         <div class="section">
-            <label>Add Potential Password to List</label>
+            <label>Add Potential Password</label>
             <div class="btn-group">
                 <input type="text" id="newPass" placeholder="e.g. dragon88">
                 <button class="btn-secondary" onclick="addPassword()" style="flex: 0 0 80px;">Add</button>
             </div>
-            <div class="list-container" id="passListDisplay">
-                </div>
+        </div>
+
+        <div class="section">
+            <label>Upload Password List (.txt)</label>
+            <input type="file" id="fileInput" accept=".txt">
+            <button class="btn-secondary" onclick="handleFileUpload()" style="width: 100%; margin-top: 10px;">Load File</button>
+        </div>
+
+        <div class="section">
+            <div class="flex-between">
+                <label style="margin-bottom: 0;">Loaded Passwords</label>
+                <button class="btn-danger" onclick="clearList()" style="flex: 0 0 80px;">Clear All</button>
+            </div>
+            <div class="list-container" id="passListDisplay"></div>
         </div>
 
         <hr style="border: 0; border-top: 1px solid #334155; margin: 20px 0;">
@@ -171,6 +204,10 @@
 
         function updateDisplay() {
             const container = document.getElementById("passListDisplay");
+            if (passwords.length === 0) {
+                container.innerHTML = `<span style="color: #64748b; font-style: italic;">List is empty...</span>`;
+                return;
+            }
             container.innerHTML = passwords.map(p => `<span class="list-tag">${p}</span>`).join('');
         }
 
@@ -184,6 +221,47 @@
             }
         }
 
+        function clearList() {
+            if(confirm("Are you sure you want to clear the password list?")) {
+                passwords = [];
+                updateDisplay();
+                showResult("List cleared.", "info");
+            }
+        }
+
+        function handleFileUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showResult("Please select a .txt file first.", "error");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                // Split by newline, trim whitespace, remove empty lines
+                const newEntries = content.split(/\r?\n/).map(p => p.trim()).filter(p => p.length > 0);
+                
+                // Merge with existing and remove duplicates using Set
+                const combined = new Set([...passwords, ...newEntries]);
+                const originalCount = passwords.length;
+                passwords = Array.from(combined);
+                
+                updateDisplay();
+                const addedCount = passwords.length - originalCount;
+                showResult(`File loaded! Added ${addedCount} new unique passwords.`, "success");
+                fileInput.value = ""; // Clear file selector
+            };
+
+            reader.onerror = function() {
+                showResult("Error reading the file.", "error");
+            };
+
+            reader.readAsText(file);
+        }
+
         async function sha256(message) {
             const msgBuffer = new TextEncoder().encode(message);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -193,14 +271,13 @@
 
         async function checkHash() {
             const hashInput = document.getElementById("hashInput").value.trim().toLowerCase();
-            const resultDiv = document.getElementById("result");
             
             if (!hashInput) {
                 showResult("Please enter a hash first.", "error");
                 return;
             }
 
-            showResult("Searching through " + passwords.length + " entries...", "info");
+            showResult("Searching " + passwords.length + " entries...", "info");
 
             for (let password of passwords) {
                 const hashed = await sha256(password);
