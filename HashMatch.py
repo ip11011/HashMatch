@@ -21,7 +21,8 @@ for password in password_list:
         print("🔓 Original password:", password)
         break
 else:
-    print("No matching passwords in the list :<, search for a good list dumbo")
+    print("No matching passwords in the list :<")
+    print("search for a good list dumbo")
 
 # Pause the program so the window doesn't close
 input("\nPress Enter to exit...")
