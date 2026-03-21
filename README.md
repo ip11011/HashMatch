@@ -26,26 +26,3 @@ Check a SHA‑256 hash against your list of passwords. Works in Python or direct
 4. Press Enter to exit
 
 ---
-
-## 🌐 Webpage Version
-
-### Languages
-
-![HTML](https://img.shields.io/badge/Html-3776AB?style=for-the-badge\&logo=html\&logoColor=white)
-![CSS](https://img.shields.io/badge/Css-3776AB?style=for-the-badge\&logo=css\&logoColor=white)
-![JavaScript](https://img.shields.io/badge/Javascript-3776AB?style=for-the-badge\&logo=javascript\&logoColor=white)
-
-### How it works
-
-1. Paste your SHA‑256 hash
-2. Paste your password list (one per line)
-3. Click **Check Hash**
-4. See the original password if a match is found
-
-### How to use
-
-* Open [`web.html`](https://ip11011.github.io/HashMatch/web.html) in a browser
-* Enter hash and passwords
-* Click the button → result appears instantly
-
----
